@@ -6,6 +6,7 @@ export const typeDefs = gql`
 		id: ID!
 		username: String!
 		email: String!
+		isAdmin: Boolean!
 	}
 
 	type AuthPayload {
@@ -24,13 +25,21 @@ export const typeDefs = gql`
 		password: String!
 	}
 
+	input UpdateUserAdmin {
+		isAdmin: Boolean!
+	}
+
 	type Query {
 		users: [User!]!
+		user(id: ID!): User
 		me: User
+		listUsers: [User!]!
+		getUser(id: ID!): User!
 	}
 
 	type Mutation {
 		register(input: RegisterInput!): AuthPayload!
 		login(input: LoginInput!): AuthPayload!
+		updateUser(id: ID!, input: UpdateUserAdmin!): User!
 	}
 `;
