@@ -14,15 +14,10 @@ export const createJwt = (user) => {
 		{
 			id: user.id,
 			username: user.username,
+			isAdmin: user.isAdmin,
 		},
 		process.env.JWT_SECRET
 	);
 
 	return token;
-};
-
-export const exclude = (user, keys) => {
-	return Object.fromEntries(
-		Object.entries(user).filter(([key]) => !keys.includes(key))
-	);
 };
