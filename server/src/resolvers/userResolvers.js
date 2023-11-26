@@ -1,17 +1,36 @@
 import { GraphQLError } from 'graphql';
-import {
-	comparePasswords,
-	createJwt,
-	exclude,
-	hashPassword,
-} from '../utils/auth.js';
+import { comparePasswords, createJwt, hashPassword } from '../utils/auth.js';
+import { exclude } from '../utils/utils.js';
 
 export const UserResolvers = {
 	Query: {
 		users: async (_, __, { prisma }) => {
 			return await prisma.user.findMany({});
 		},
-		me: async () => {},
+		user: async (_, { id }, { prisma }) => {
+			return await prisma.user.findUnique({
+				where: {
+					id,
+				},
+			});
+		},
+		me: async (_, __, { prisma, user }) => {
+			if (!user) {
+				throw new GraphQLError('Not authenticated', {
+					extensions: {
+						code: 'NOT_AUTHENTICATED',
+					},
+				});
+			}
+
+			const authenticatedUser = await prisma.user.findUnique({
+				where: {
+					id: user.id,
+				},
+			});
+
+			return authenticatedUser;
+		},
 	},
 	Mutation: {
 		register: async (_, { input }, { prisma }) => {
